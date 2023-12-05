@@ -1,41 +1,50 @@
-import axios from 'axios';
+import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
 
-axios.defaults.headers.common['x-api-key'] =
-  'live_cpWvh1PdHlSY1GaBwlNkgTcypjBAlPT488yP0A7OpiwD6S6N3UrDFptn9OmKcCN6';
-axios.defaults.baseURL = 'https://api.thecatapi.com/v1';
+const loader = document.querySelector('p.loader');
+const breedsSelect = document.querySelector('select.breed-select');
+const catInfo = document.querySelector('div.cat-info');
+const error = document.querySelector('p.error');
 
-function fetchBreeds() {
-  return axios.get('/breeds').then(response => {
-    return response.data;
-  });
-}
+loader.classList.remove('hidden');
+breedsSelect.classList.add('hidden');
+catInfo.classList.add('hidden');
 
-function fetchCatByBreed(breedId) {
-  return axios.get(`/images/search?breed_ids=${breedId}`).then(response => {
-    return response.data;
-  });
-}
-
-const effect = document.querySelector('#effect');
-
-/** @type {HTMLSelectElement | null} */
 const breeds = document.querySelector('#breeds');
 
-fetchBreeds().then(data => {
-  // effect.insertAdjacentHTML('afterbegin', JSON.stringify(data));
-  const html = data.map(
-    breed => `<option value="${breed.id}">${breed.name}</option>`
-  );
-  breeds.innerHTML = html;
-});
+fetchBreeds()
+  .then(data => {
+    const html = data
+      .map(breed => `<option value="${breed.id}">${breed.name}</option>`)
+      .join('');
+    breeds.innerHTML = html;
+    loader.classList.add('hidden');
+    breedsSelect.classList.remove('hidden');
+  })
+  .catch(() => {
+    loader.classList.add('hidden');
+    error.classList.remove('hidden');
+  });
 
 breeds.addEventListener('change', ev => {
   const breedId = ev.target.value;
-  fetchCatByBreed(breedId).then(cats => {
-    const array = cats.map(
-      cat =>
-        `<h2>Cat ID: ${cat.id}</h2><img width="800" height="600" src="${cat.url}"/>`
-    );
-    effect.innerHTML = array.join('');
-  });
+
+  loader.classList.remove('hidden');
+  catInfo.classList.add('hidden');
+
+  fetchCatByBreed(breedId)
+    .then(cats => {
+      const array = cats.map(
+        cat =>
+          `<h2>Cat Name: ${cat.breeds[0].name}</h2>
+          <h2>${cat.breeds[0].description}</h2>
+          <img width="800" height="600" src="${cat.url}"/>`
+      );
+      effect.innerHTML = array.join('');
+      loader.classList.add('hidden');
+      catInfo.classList.remove('hidden');
+    })
+    .catch(() => {
+      loader.classList.add('hidden');
+      error.classList.remove('hidden');
+    });
 });
