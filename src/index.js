@@ -37,6 +37,7 @@ breeds.addEventListener('change', ev => {
         cat =>
           `<h2>Cat Name: ${cat.breeds[0].name}</h2>
           <h2>${cat.breeds[0].description}</h2>
+          <h2>${cat.breeds[0].temperament}</h2>
           <img width="800" height="600" src="${cat.url}"/>`
       );
       effect.innerHTML = array.join('');
