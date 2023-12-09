@@ -17,6 +17,7 @@ fetchBreeds()
     const html = data
       .map(breed => `<option value="${breed.id}">${breed.name}</option>`)
       .join('');
+    0;
     breeds.innerHTML = html;
     loader.classList.add('hidden');
     breedsSelect.classList.remove('hidden');
@@ -34,6 +35,7 @@ breeds.addEventListener('change', ev => {
 
   loader.classList.remove('hidden');
   catInfo.classList.add('hidden');
+  error.classList.remove('show-error');
 
   fetchCatByBreed(breedId)
     .then(cats => {
