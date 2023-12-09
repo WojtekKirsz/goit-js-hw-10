@@ -1,4 +1,5 @@
 import { fetchBreeds, fetchCatByBreed } from './cat-api.js';
+import Notiflix from 'notiflix';
 
 const loader = document.querySelector('p.loader');
 const breedsSelect = document.querySelector('select.breed-select');
@@ -22,7 +23,10 @@ fetchBreeds()
   })
   .catch(() => {
     loader.classList.add('hidden');
-    error.classList.remove('hidden');
+    Notiflix.Notify.failure(
+      'Oops! Something went wrong! Try reloading the page!'
+    );
+    error.classList.add('show-error');
   });
 
 breeds.addEventListener('change', ev => {
@@ -46,6 +50,9 @@ breeds.addEventListener('change', ev => {
     })
     .catch(() => {
       loader.classList.add('hidden');
-      error.classList.remove('hidden');
+      Notiflix.Notify.failure(
+        'Oops! Something went wrong! Try reloading the page!'
+      );
+      error.classList.add('show-error');
     });
 });
